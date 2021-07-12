@@ -44,9 +44,19 @@ namespace ProductManagment
                     Version = "v1"
                 });
             });
-            services.AddCors(c =>
+            //services.AddCors(c =>
+            //{
+            //    c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //});
+           
+            services.AddCors(options =>
             {
-                c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                options.AddPolicy(
+                  "CorsPolicy",
+                  builder => builder.WithOrigins("http://localhost:4200")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials());
             });
         }
 
@@ -59,12 +69,18 @@ namespace ProductManagment
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Demo APi"));
             }
-
-            app.UseCors(op => op.AllowAnyOrigin());
+            // app.UseCors(op => op.AllowAnyOrigin());
+            app.UseCors("CorsPolicy");
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller=Home}/{action=Index}/{id?}");
+            //});
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
